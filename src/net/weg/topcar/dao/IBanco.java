@@ -6,7 +6,6 @@ import java.util.List;
 
 public interface IBanco<T, ID> {
 
-
     List<T> buscarTodos();
 
     T buscarUm(ID id) throws ObjetoNaoEncontradoException;

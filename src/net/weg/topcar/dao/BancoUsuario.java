@@ -1,40 +1,40 @@
 package net.weg.topcar.dao;
 
 import net.weg.topcar.model.exceptions.ObjetoNaoEncontradoException;
-import net.weg.topcar.model.Usuario;
+import net.weg.topcar.model.usuarios.Cliente;
 
 import java.util.Collections;
 import java.util.List;
 
-public class BancoUsuario implements IBanco<Usuario, String> {
+public class BancoUsuario implements IBanco<Cliente, String> {
 
-    private List<Usuario> usuarios;
+    private List<Cliente> clientes;
 
-    public List<Usuario> buscarTodos() {
-        return Collections.unmodifiableList(usuarios);
+    public List<Cliente> buscarTodos() {
+        return Collections.unmodifiableList(clientes);
     }
 
-    public Usuario buscarUm(String cpf) throws ObjetoNaoEncontradoException {
-        for (Usuario usuario : usuarios) {
-            if (usuario.getCPF().equals(cpf)) {
-                return usuario;
+    public Cliente buscarUm(String cpf) throws ObjetoNaoEncontradoException {
+        for (Cliente cliente : clientes) {
+            if (cliente.getCPF().equals(cpf)) {
+                return cliente;
             }
         }
         throw new ObjetoNaoEncontradoException();
     }
 
-    public void adicionar(Usuario usuario) {
-        usuarios.add(usuario);
+    public void adicionar(Cliente cliente) {
+        clientes.add(cliente);
     }
 
     public void remover(String cpf) throws ObjetoNaoEncontradoException {
-        Usuario usuario = buscarUm(cpf);
-        usuarios.remove(usuario);
+        Cliente cliente = buscarUm(cpf);
+        clientes.remove(cliente);
     }
 
-    public void alterar(String cpf, Usuario novoUsuario) throws ObjetoNaoEncontradoException {
-        Usuario usuario = buscarUm(cpf);
-        usuarios.set(usuarios.indexOf(usuario), novoUsuario);
+    public void alterar(String cpf, Cliente novoCliente) throws ObjetoNaoEncontradoException {
+        Cliente cliente = buscarUm(cpf);
+        clientes.set(clientes.indexOf(cliente), novoCliente);
     }
 
 }

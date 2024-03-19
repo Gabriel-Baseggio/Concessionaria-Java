@@ -1,6 +1,6 @@
 package net.weg.topcar.model.usuarios;
 
-import net.weg.topcar.model.Usuario;
+import net.weg.topcar.dao.IBanco;
 import net.weg.topcar.model.exceptions.PrecoInvalidoException;
 import net.weg.topcar.model.exceptions.UsuarioExistenteException;
 import net.weg.topcar.model.exceptions.ObjetoNaoEncontradoException;
@@ -9,21 +9,21 @@ import net.weg.topcar.model.Veiculo;
 
 import java.util.List;
 
-public interface IGerente extends IFuncionario {
+public interface IGerente extends IVendedor {
 
-    void cadastrarVeiculo(Veiculo veiculo) throws VeiculoExistenteException;
+    void cadastrarVeiculo(Veiculo veiculo, IBanco<Veiculo, Integer> banco) throws VeiculoExistenteException;
 
-    void removerVeiculo(int codigo);
+    void removerVeiculo(Integer codigo, IBanco<Veiculo, Integer> banco);
 
-    void editarVeiculo(int codigo, Veiculo veiculoEditado);
+    void editarVeiculo(Integer codigo, Veiculo veiculoEditado, IBanco<Veiculo, Integer> banco);
 
-    void alterarPrecoVeiculo(int codigo, double novoPreco) throws PrecoInvalidoException;
+    void alterarPrecoVeiculo(Integer codigo, Double novoPreco, IBanco<Veiculo, Integer> banco) throws PrecoInvalidoException;
 
-    void cadastrarUsuario(Usuario usuario) throws UsuarioExistenteException;
+    void cadastrarCliente(Cliente cliente, IBanco<Cliente, Long> banco) throws UsuarioExistenteException;
 
-    void removerUsuario(String cpf);
+    void removerCliente(Long cpf, IBanco<Cliente, Long> banco);
 
-    void editarUsuario(String cpf, Usuario usuarioEditado) throws ObjetoNaoEncontradoException;
+    void editarCliente(Long cpf, Cliente clienteEditado, IBanco<Cliente, Long> banco) throws ObjetoNaoEncontradoException;
 
     List<Vendedor> verVendedores();
 
@@ -31,6 +31,6 @@ public interface IGerente extends IFuncionario {
 
     List<String> verPagamentosDosVendedores();
 
-    String verPagamentoVendedor(int matricula);
+    String verPagamentoVendedor(Long cpf);
 
 }

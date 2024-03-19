@@ -1,19 +1,58 @@
 package net.weg.topcar.model.usuarios;
 
-import net.weg.topcar.model.Usuario;
+import net.weg.topcar.dao.IBanco;
 import net.weg.topcar.model.Veiculo;
+import net.weg.topcar.model.exceptions.ObjetoNaoEncontradoException;
 
-public class Vendedor extends Funcionario {
-    public Vendedor(String nome, String cpf, String senha, int matricula, double salario) {
-        super(nome, cpf, senha, matricula, salario);
+public class Vendedor extends Cliente implements IVendedor {
+    private Double salario;
+    private Double totalComissao;
+
+    public Vendedor(String nome, Long cpf, String senha, Double salario) {
+        super(nome, cpf, senha);
+        this.salario = salario;
     }
 
     @Override
-    public void venderVeiculo(Usuario cliente, Veiculo veiculo) {
-        if (!(veiculo.isVendido())) {
-            cliente.addVeiculo(veiculo);
-            this.adicionarComissao(veiculo.getPreco() * 0.01);
-        }
+    public String menu() {
+        return super.menu() +
+                """
+                        4 - Vender veículo
+                        5 - Procurar cliente
+                        6 - Ver pagamento
+                        """;
+    }
+
+    public double calcularPagamento() {
+        return salario + totalComissao;
+    }
+
+    @Override
+    public void vender(Veiculo veiculo, Cliente cliente) {
+        cliente.adicionarProprioVeiculo(veiculo);
+        this.setComissao(veiculo.getPreco() * 0.01);
+    }
+
+    @Override
+    public Cliente buscarUsuario(Long cpf, IBanco<Cliente, Long> banco) throws ObjetoNaoEncontradoException {
+        return banco.buscarUm(cpf);
+    }
+
+    @Override
+    public String verPagamento() {
+        return this.getCPF() + ": R$" + this.calcularPagamento();
+    }
+
+    public void setComissao(double comissao) {
+        this.totalComissao += comissao;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+                "\nSalário: R$" + this.salario +
+                "\nTotal de comissão: R$" + this.totalComissao +
+                "\nPagamento: R$" + this.calcularPagamento();
     }
 
 }

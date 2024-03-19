@@ -1,6 +1,7 @@
 package net.weg.topcar.model.usuarios;
 
-import net.weg.topcar.model.Usuario;
+import net.weg.topcar.dao.IBanco;
+import net.weg.topcar.model.exceptions.ObjetoNaoEncontradoException;
 import net.weg.topcar.model.exceptions.PrecoInvalidoException;
 import net.weg.topcar.model.exceptions.UsuarioExistenteException;
 import net.weg.topcar.model.exceptions.VeiculoExistenteException;
@@ -11,10 +12,10 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class Gerente extends Funcionario {
+public class Gerente extends Vendedor implements IGerente {
 
-    public Gerente(String nome, String cpf, String senha, int matricula, double salario) {
-        super(nome, cpf, senha, matricula, salario);
+    public Gerente(String nome, Long cpf, String senha, Double salario) {
+        super(nome, cpf, senha, salario);
     }
 
     @Override
@@ -36,45 +37,45 @@ public class Gerente extends Funcionario {
     }
 
     @Override
-    public void venderVeiculo(Usuario cliente, Veiculo veiculo) {
-        if (!(veiculo.isVendido())) {
-            cliente.addVeiculo(veiculo);
-            this.adicionarComissao(veiculo.getPreco() * 0.02);
-        }
+    public void removerVeiculo(Integer codigo) {
+
     }
 
-    public void cadastrarVeiculo(Veiculo veiculo) throws VeiculoExistenteException {
-        veiculo.addVeiculo();
+    @Override
+    public void editarVeiculo(Integer codigo, Veiculo veiculoEditado) {
+
     }
 
-    public void removerVeiculo(Veiculo veiculo) {
-        veiculo.removeVeiculo();
+    @Override
+    public void alterarPrecoVeiculo(Integer codigo, Double novoPreco) throws PrecoInvalidoException {
+
     }
 
-    public void editarVeiculo(Veiculo veiculoEditar, Veiculo veiculoEditado) {
-        veiculoEditar.editarVeiculo(veiculoEditado);
+    @Override
+    public void cadastrarCliente(Cliente cliente) throws UsuarioExistenteException {
+
     }
 
-    public void alterarPrecoVeiculo(Veiculo veiculoEditar, double novoPreco) throws PrecoInvalidoException {
-        veiculoEditar.setPreco(novoPreco);
+    @Override
+    public void removerCliente(Long cpf) {
+
     }
 
-    public void cadastrarUsuario(Usuario usuario) throws UsuarioExistenteException {
-        usuario.addUsuario();
+    @Override
+    public void removerUsuario(Long cpf) {
+
     }
 
-    public void removerUsuario(Usuario usuario) {
-        usuario.removeUsuario();
+    @Override
+    public void editarCliente(Long cpf, Cliente clienteEditado, IBanco<Cliente, Long> banco) throws ObjetoNaoEncontradoException {
+        banco.alterar(cpf, clienteEditado);
     }
 
-    public void editarUsuario(Usuario usuarioEditar, Usuario usuarioEditado) {
-        usuarioEditar.editarUsuario(usuarioEditado);
-    }
 
     public List<Vendedor> verVendedores() {
         ArrayList<Vendedor> vendedores = new ArrayList<>();
-        for (Usuario usuarioChecar : USUARIOS) {
-            if (usuarioChecar instanceof Vendedor vendedor) {
+        for (Cliente clienteChecar : USUARIOS) {
+            if (clienteChecar instanceof Vendedor vendedor) {
                 vendedores.add(vendedor);
             }
         }
@@ -83,8 +84,8 @@ public class Gerente extends Funcionario {
 
     public List<Cliente> verClientes() {
         ArrayList<Cliente> clientes = new ArrayList<>();
-        for (Usuario usuarioChecar : USUARIOS) {
-            if (usuarioChecar instanceof Cliente cliente) {
+        for (Cliente clienteChecar : USUARIOS) {
+            if (clienteChecar instanceof Cliente cliente) {
                 clientes.add(cliente);
             }
         }
@@ -95,6 +96,16 @@ public class Gerente extends Funcionario {
         List<String> pagamentos = new ArrayList<>();
         verVendedores().forEach((v) -> pagamentos.add(v.verPagamento()));
         return Collections.unmodifiableList(pagamentos);
+    }
+
+    @Override
+    public String verPagamentoVendedor(Long cpf) {
+        for (Vendedor vendedor : verVendedores()) {
+            if (vendedor.matricula == matricula) {
+                return vendedor.verPagamento();
+            }
+        }
+        return "Vendedor não encontrado!";
     }
 
     // Fazer uma sobrecarga pra buscarUsuario por matricula?
