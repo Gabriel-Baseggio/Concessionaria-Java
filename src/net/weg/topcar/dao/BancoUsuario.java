@@ -6,7 +6,7 @@ import net.weg.topcar.model.usuarios.Cliente;
 import java.util.Collections;
 import java.util.List;
 
-public class BancoUsuario implements IBanco<Cliente, String> {
+public class BancoUsuario implements IBanco<Cliente, Long> {
 
     private List<Cliente> clientes;
 
@@ -14,7 +14,7 @@ public class BancoUsuario implements IBanco<Cliente, String> {
         return Collections.unmodifiableList(clientes);
     }
 
-    public Cliente buscarUm(String cpf) throws ObjetoNaoEncontradoException {
+    public Cliente buscarUm(Long cpf) throws ObjetoNaoEncontradoException {
         for (Cliente cliente : clientes) {
             if (cliente.getCPF().equals(cpf)) {
                 return cliente;
@@ -27,12 +27,12 @@ public class BancoUsuario implements IBanco<Cliente, String> {
         clientes.add(cliente);
     }
 
-    public void remover(String cpf) throws ObjetoNaoEncontradoException {
+    public void remover(Long cpf) throws ObjetoNaoEncontradoException {
         Cliente cliente = buscarUm(cpf);
         clientes.remove(cliente);
     }
 
-    public void alterar(String cpf, Cliente novoCliente) throws ObjetoNaoEncontradoException {
+    public void alterar(Long cpf, Cliente novoCliente) throws ObjetoNaoEncontradoException {
         Cliente cliente = buscarUm(cpf);
         clientes.set(clientes.indexOf(cliente), novoCliente);
     }

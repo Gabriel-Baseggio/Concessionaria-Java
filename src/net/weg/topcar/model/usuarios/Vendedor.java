@@ -1,7 +1,7 @@
 package net.weg.topcar.model.usuarios;
 
 import net.weg.topcar.dao.IBanco;
-import net.weg.topcar.model.Veiculo;
+import net.weg.topcar.model.veiculos.Veiculo;
 import net.weg.topcar.model.exceptions.ObjetoNaoEncontradoException;
 
 public class Vendedor extends Cliente implements IVendedor {
@@ -41,6 +41,11 @@ public class Vendedor extends Cliente implements IVendedor {
     @Override
     public String verPagamento() {
         return this.getCPF() + ": R$" + this.calcularPagamento();
+    }
+
+    @Override
+    public String verPagamentoComNome() {
+        return this.getNome() + ": " + this.verPagamento();
     }
 
     public void setComissao(double comissao) {

@@ -13,7 +13,7 @@ public class LoginUsuario {
         this.bancoUsuario = bancoUsuario;
     }
 
-    public Cliente login(String cpf, String senha) throws ObjetoNaoEncontradoException, SenhaIncorretaException {
+    public Cliente login(Long cpf, String senha) throws ObjetoNaoEncontradoException, SenhaIncorretaException {
         this.cliente = this.bancoUsuario.buscarUm(cpf);
         this.validarSenha(senha);
         return this.cliente;

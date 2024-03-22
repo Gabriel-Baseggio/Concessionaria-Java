@@ -1,6 +1,5 @@
 package net.weg.topcar.model.veiculos;
 
-import net.weg.topcar.model.Veiculo;
 import net.weg.topcar.model.exceptions.PrecoInvalidoException;
 
 public class Caminhao extends Veiculo {
@@ -15,7 +14,6 @@ public class Caminhao extends Veiculo {
     @Override
     public String toString() {
         return super.toString() +
-                "\nCaminhão" +
-                "\nTração: " + tracao;
+                "\nTração: " + this.tracao;
     }
 }

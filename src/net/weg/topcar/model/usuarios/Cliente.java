@@ -1,7 +1,7 @@
 package net.weg.topcar.model.usuarios;
 
 import net.weg.topcar.dao.IBanco;
-import net.weg.topcar.model.Veiculo;
+import net.weg.topcar.model.veiculos.Veiculo;
 import net.weg.topcar.model.exceptions.ObjetoNaoEncontradoException;
 
 import java.util.ArrayList;
@@ -29,6 +29,10 @@ public class Cliente implements ICliente {
         return senha;
     }
 
+    public String getNome() {
+        return this.nome;
+    }
+
 
     public String menu() {
         return """                        
@@ -54,7 +58,7 @@ public class Cliente implements ICliente {
     }
 
     public void adicionarProprioVeiculo(Veiculo veiculo) {
-        veiculo.alterarVendido();
+        veiculo.alterarStatusVendido();
         VEICULOS.add(veiculo);
     }
 

@@ -1,6 +1,5 @@
 package net.weg.topcar.model.veiculos;
 
-import net.weg.topcar.model.Veiculo;
 import net.weg.topcar.model.exceptions.PrecoInvalidoException;
 
 public class Moto extends Veiculo {
@@ -19,9 +18,8 @@ public class Moto extends Veiculo {
     @Override
     public String toString() {
         return super.toString() +
-                "\nMoto" +
-                "\nTipo do motor: " + tipoMotor +
-                "\nCilindradas: " + cilindradas +
-                "\nQuantidade de marchas: " + qtdMarchas;
+                "\nTipo do motor: " + this.tipoMotor +
+                "\nCilindradas: " + this.cilindradas +
+                "\nQuantidade de marchas: " + this.qtdMarchas;
     }
 }

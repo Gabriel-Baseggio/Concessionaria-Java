@@ -7,4 +7,9 @@ public class EntradaInteiro extends Entrada<Long> {
     public Long leia() throws InputMismatchException {
         return sc.nextLong();
     }
+
+    @Override
+    protected boolean validaEntrada(Long valor) {
+        return valor == 0;
+    }
 }

@@ -1,11 +1,11 @@
 package net.weg.topcar.model.usuarios;
 
 import net.weg.topcar.dao.IBanco;
+import net.weg.topcar.model.veiculos.Veiculo;
+import net.weg.topcar.model.exceptions.AcessoNegadoException;
+import net.weg.topcar.model.exceptions.ObjetoExistenteException;
 import net.weg.topcar.model.exceptions.ObjetoNaoEncontradoException;
 import net.weg.topcar.model.exceptions.PrecoInvalidoException;
-import net.weg.topcar.model.exceptions.UsuarioExistenteException;
-import net.weg.topcar.model.exceptions.VeiculoExistenteException;
-import net.weg.topcar.model.Veiculo;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,85 +37,132 @@ public class Gerente extends Vendedor implements IGerente {
     }
 
     @Override
-    public void removerVeiculo(Integer codigo) {
-
+    public String cadastrarVeiculo(Veiculo veiculo, IBanco<Veiculo, Integer> banco) throws ObjetoExistenteException {
+        banco.adicionar(veiculo);
+        return "Veículo cadastrado!";
     }
 
     @Override
-    public void editarVeiculo(Integer codigo, Veiculo veiculoEditado) {
+    public String removerVeiculo(Integer codigo, IBanco<Veiculo, Integer> banco) throws ObjetoNaoEncontradoException {
+        banco.remover(codigo);
+        return "Veículo removido!";
+    }
 
+    /**
+     * Método responsável por executar a ação de edição de um veículo em nível de repositório (DAO).
+     * O parâmetro de veículo recebe todas as informações editadas do veículo, já o parâmetro
+     * de banco recebe qual o repositório que manipula objetos do tipo veículo.
+     * O código do veículo permanecerá o mesmo, por esse motivo é possível pegar o mesmo código presente
+     * no objeto editado.
+     *
+     * @param veiculo
+     * @param banco
+     * @throws ObjetoNaoEncontradoException
+     */
+    @Override
+    public String editarVeiculo(Veiculo veiculo, IBanco<Veiculo, Integer> banco) throws ObjetoNaoEncontradoException {
+        banco.alterar(veiculo.getCODIGO(), veiculo);
+        return "Veículo editado!";
     }
 
     @Override
-    public void alterarPrecoVeiculo(Integer codigo, Double novoPreco) throws PrecoInvalidoException {
-
+    public String alterarPrecoVeiculo(Integer codigo, Double novoPreco, IBanco<Veiculo, Integer> banco)
+            throws PrecoInvalidoException, ObjetoNaoEncontradoException {
+        Veiculo veiculo = banco.buscarUm(codigo);
+        veiculo.setPreco(novoPreco);
+        banco.alterar(codigo, veiculo);
+        return "Preço do veículo alterado!";
     }
 
     @Override
-    public void cadastrarCliente(Cliente cliente) throws UsuarioExistenteException {
+    public String cadastrarCliente(Cliente cliente, IBanco<Cliente, Long> banco)
+            throws ObjetoExistenteException, AcessoNegadoException {
+        if(cliente instanceof Gerente)
+            throw new AcessoNegadoException();
 
+        banco.adicionar(cliente);
+        return "Cliente cadastrado!";
     }
 
     @Override
-    public void removerCliente(Long cpf) {
+    public String removerCliente(Long cpf, IBanco<Cliente, Long> banco)
+            throws ObjetoNaoEncontradoException, AcessoNegadoException {
+        Cliente cliente = banco.buscarUm(cpf);
+        if(cliente instanceof Gerente)
+            throw new AcessoNegadoException();
 
+        banco.remover(cpf);
+        return "Cliente removido!";
+    }
+
+    /**
+     * Método responsável por executar a ação de edição de um cliente em nível de repositório (DAO).
+     * O parâmetro de cliente recebe todas as informações editadas do cliente, já o parâmetro
+     * de banco recebe qual o repositório que manipula objetos do tipo cliente.
+     * O cpf do cliente permanecerá o mesmo, por esse motivo é possível pegar o mesmo cpf presente
+     * no objeto editado.
+     *
+     * @param cliente
+     * @param banco
+     * @throws ObjetoNaoEncontradoException
+     */
+    @Override
+    public String editarCliente(Cliente cliente, IBanco<Cliente, Long> banco) throws ObjetoNaoEncontradoException {
+        banco.alterar(cliente.getCPF(), cliente);
+        return "Cliente editado!";
     }
 
     @Override
-    public void removerUsuario(Long cpf) {
+    public List<Vendedor> verVendedores(IBanco<Cliente, Long> banco) {
+        // List<Cliente> usuarios = banco.buscarTodos();
+        // usuarios.removeIf(c -> !(c instanceof Vendedor));
 
-    }
+        List<Cliente> usuarios = banco.buscarTodos();
+        List<Vendedor> vendedores = new ArrayList<>();
 
-    @Override
-    public void editarCliente(Long cpf, Cliente clienteEditado, IBanco<Cliente, Long> banco) throws ObjetoNaoEncontradoException {
-        banco.alterar(cpf, clienteEditado);
-    }
-
-
-    public List<Vendedor> verVendedores() {
-        ArrayList<Vendedor> vendedores = new ArrayList<>();
-        for (Cliente clienteChecar : USUARIOS) {
-            if (clienteChecar instanceof Vendedor vendedor) {
+        usuarios.forEach(cliente -> {
+            if(cliente instanceof Vendedor vendedor){
                 vendedores.add(vendedor);
             }
-        }
+        });
+
         return Collections.unmodifiableList(vendedores);
     }
 
-    public List<Cliente> verClientes() {
-        ArrayList<Cliente> clientes = new ArrayList<>();
-        for (Cliente clienteChecar : USUARIOS) {
-            if (clienteChecar instanceof Cliente cliente) {
-                clientes.add(cliente);
-            }
-        }
-        return Collections.unmodifiableList(clientes);
-    }
-
-    public List<String> verPagamentosDosVendedores() {
-        List<String> pagamentos = new ArrayList<>();
-        verVendedores().forEach((v) -> pagamentos.add(v.verPagamento()));
-        return Collections.unmodifiableList(pagamentos);
+    @Override
+    public List<Cliente> verClientes(IBanco<Cliente, Long> banco) {
+        return Collections.unmodifiableList(banco.buscarTodos());
     }
 
     @Override
-    public String verPagamentoVendedor(Long cpf) {
-        for (Vendedor vendedor : verVendedores()) {
-            if (vendedor.matricula == matricula) {
-                return vendedor.verPagamento();
-            }
-        }
-        return "Vendedor não encontrado!";
+    public List<String> verPagamentosDosVendedores(IBanco<Cliente, Long> banco) {
+        List<Vendedor> vendedores = verVendedores(banco);
+        List<String> pagamentos = new ArrayList<>();
+
+        vendedores.forEach(vendedor -> {
+            pagamentos.add(vendedor.verPagamentoComNome());
+        });
+
+        return pagamentos;
     }
 
-    // Fazer uma sobrecarga pra buscarUsuario por matricula?
-    public String verPagamentoVendedor(int matricula) {
-        for (Vendedor vendedor : verVendedores()) {
-            if (vendedor.matricula == matricula) {
-                return vendedor.verPagamento();
-            }
+    @Override
+    public String verPagamentoVendedor(Long cpf, IBanco<Cliente, Long> banco) throws ObjetoNaoEncontradoException {
+        Cliente cliente = banco.buscarUm(cpf);
+        if(cliente instanceof Vendedor vendedor){
+            return vendedor.verPagamentoComNome();
         }
-        return "Vendedor não encontrado!";
+        throw new RuntimeException("O usuário informado não é um vendedor!");
     }
 
+    @Override
+    public void vender(Veiculo veiculo, Cliente cliente) {
+        cliente.adicionarProprioVeiculo(veiculo);
+        this.setComissao(veiculo.getPreco() * 0.02);
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 }

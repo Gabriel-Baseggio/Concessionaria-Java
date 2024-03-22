@@ -8,4 +8,9 @@ public class EntradaDecimal extends Entrada<Double> {
     public Double leia() throws InputMismatchException {
         return sc.nextDouble();
     }
+
+    @Override
+    protected boolean validaEntrada(Double valor) {
+        return valor == 0;
+    }
 }

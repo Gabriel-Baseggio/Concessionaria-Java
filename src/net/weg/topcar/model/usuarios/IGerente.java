@@ -1,36 +1,36 @@
 package net.weg.topcar.model.usuarios;
 
 import net.weg.topcar.dao.IBanco;
-import net.weg.topcar.model.exceptions.PrecoInvalidoException;
-import net.weg.topcar.model.exceptions.UsuarioExistenteException;
-import net.weg.topcar.model.exceptions.ObjetoNaoEncontradoException;
-import net.weg.topcar.model.exceptions.VeiculoExistenteException;
-import net.weg.topcar.model.Veiculo;
+import net.weg.topcar.model.exceptions.*;
+import net.weg.topcar.model.veiculos.Veiculo;
 
 import java.util.List;
 
 public interface IGerente extends IVendedor {
 
-    void cadastrarVeiculo(Veiculo veiculo, IBanco<Veiculo, Integer> banco) throws VeiculoExistenteException;
+    String cadastrarVeiculo(Veiculo veiculo, IBanco<Veiculo, Integer> banco) throws ObjetoExistenteException;
 
-    void removerVeiculo(Integer codigo, IBanco<Veiculo, Integer> banco);
+    String removerVeiculo(Integer codigo, IBanco<Veiculo, Integer> banco) throws ObjetoNaoEncontradoException;
 
-    void editarVeiculo(Integer codigo, Veiculo veiculoEditado, IBanco<Veiculo, Integer> banco);
+    String editarVeiculo(Veiculo veiculo, IBanco<Veiculo, Integer> banco) throws ObjetoNaoEncontradoException;
 
-    void alterarPrecoVeiculo(Integer codigo, Double novoPreco, IBanco<Veiculo, Integer> banco) throws PrecoInvalidoException;
+    String alterarPrecoVeiculo(Integer codigo, Double novoPreco, IBanco<Veiculo, Integer> banco)
+            throws PrecoInvalidoException, ObjetoNaoEncontradoException;
 
-    void cadastrarCliente(Cliente cliente, IBanco<Cliente, Long> banco) throws UsuarioExistenteException;
+    String cadastrarCliente(Cliente cliente, IBanco<Cliente, Long> banco)
+            throws ObjetoExistenteException, AcessoNegadoException;
 
-    void removerCliente(Long cpf, IBanco<Cliente, Long> banco);
+    String removerCliente(Long cpf, IBanco<Cliente, Long> banco)
+            throws ObjetoNaoEncontradoException, AcessoNegadoException;
 
-    void editarCliente(Long cpf, Cliente clienteEditado, IBanco<Cliente, Long> banco) throws ObjetoNaoEncontradoException;
+    String editarCliente(Cliente cliente, IBanco<Cliente, Long> banco) throws ObjetoNaoEncontradoException;
 
-    List<Vendedor> verVendedores();
+    List<Vendedor> verVendedores(IBanco<Cliente, Long> banco);
 
-    List<Cliente> verClientes();
+    List<Cliente> verClientes(IBanco<Cliente, Long> banco);
 
-    List<String> verPagamentosDosVendedores();
+    List<String> verPagamentosDosVendedores(IBanco<Cliente, Long> banco);
 
-    String verPagamentoVendedor(Long cpf);
+    String verPagamentoVendedor(Long cpf, IBanco<Cliente, Long> banco) throws ObjetoNaoEncontradoException;
 
 }

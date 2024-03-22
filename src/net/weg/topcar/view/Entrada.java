@@ -9,9 +9,27 @@ public abstract class Entrada<T> {
 
     public abstract T leia() throws InputMismatchException;
 
-    public T leia(String texto, Saida saida) throws InputMismatchException {
+    public T leiaComSaida(String texto, Saida saida) throws InputMismatchException {
         saida.escreva(texto);
         return leia();
     }
+
+    public T leiaComSaidaEValidacao(String texto, Saida saida) throws InputMismatchException {
+        T valor;
+        do {
+            valor = leiaComSaida(texto, saida);
+        }while (validaEntrada(valor));
+        return valor;
+    }
+
+    public T leiaComValidacao(){
+        T valor;
+        do {
+            valor = leia();
+        }while (validaEntrada(valor));
+        return valor;
+    }
+
+    protected abstract boolean validaEntrada(T valor);
 
 }
