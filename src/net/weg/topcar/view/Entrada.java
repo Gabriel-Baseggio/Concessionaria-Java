@@ -18,15 +18,15 @@ public abstract class Entrada<T> {
         T valor;
         do {
             valor = leiaComSaida(texto, saida);
-        }while (validaEntrada(valor));
+        } while (validaEntrada(valor));
         return valor;
     }
 
-    public T leiaComValidacao(){
+    public T leiaComValidacao() throws InputMismatchException {
         T valor;
         do {
             valor = leia();
-        }while (validaEntrada(valor));
+        } while (validaEntrada(valor));
         return valor;
     }
 

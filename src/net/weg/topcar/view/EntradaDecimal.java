@@ -11,6 +11,6 @@ public class EntradaDecimal extends Entrada<Double> {
 
     @Override
     protected boolean validaEntrada(Double valor) {
-        return valor == 0;
+        return valor <= 0.0;
     }
 }

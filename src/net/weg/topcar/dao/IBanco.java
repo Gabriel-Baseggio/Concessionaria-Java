@@ -1,5 +1,6 @@
 package net.weg.topcar.dao;
 
+import net.weg.topcar.model.exceptions.AcessoNegadoException;
 import net.weg.topcar.model.exceptions.ObjetoExistenteException;
 import net.weg.topcar.model.exceptions.ObjetoNaoEncontradoException;
 
@@ -13,7 +14,9 @@ public interface IBanco<T, ID> {
 
     void adicionar(T novo) throws ObjetoExistenteException;
 
-    void remover(ID id) throws ObjetoNaoEncontradoException;
+    void remover(ID id) throws ObjetoNaoEncontradoException, AcessoNegadoException;
+
+    Boolean existe(ID id);
 
     void alterar(ID id, T novo) throws ObjetoNaoEncontradoException;
 

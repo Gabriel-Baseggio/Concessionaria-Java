@@ -9,6 +9,6 @@ public class EntradaTexto extends Entrada<String> {
 
     @Override
     protected boolean validaEntrada(String valor) {
-        return valor.equals("");
+        return valor.isBlank();
     }
 }
