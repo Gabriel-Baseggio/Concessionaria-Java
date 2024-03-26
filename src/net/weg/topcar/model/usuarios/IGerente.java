@@ -8,20 +8,20 @@ import java.util.List;
 
 public interface IGerente extends IVendedor {
 
-    String cadastrarVeiculo(Veiculo veiculo, IBanco<Veiculo, Integer> banco) throws ObjetoExistenteException;
+    String cadastrarVeiculo(Veiculo veiculo, IBanco<Veiculo, Long> banco) throws ObjetoExistenteException;
 
-    String removerVeiculo(Integer codigo, IBanco<Veiculo, Integer> banco) throws ObjetoNaoEncontradoException;
+    String removerVeiculo(Long codigo, IBanco<Veiculo, Long> banco) throws ObjetoNaoEncontradoException;
 
-    String editarVeiculo(Veiculo veiculo, IBanco<Veiculo, Integer> banco) throws ObjetoNaoEncontradoException;
+    String editarVeiculo(Veiculo veiculo, IBanco<Veiculo, Long> banco) throws ObjetoNaoEncontradoException;
 
-    String alterarPrecoVeiculo(Integer codigo, Double novoPreco, IBanco<Veiculo, Integer> banco)
+    String alterarPrecoVeiculo(Long codigo, Double novoPreco, IBanco<Veiculo, Long> banco)
             throws PrecoInvalidoException, ObjetoNaoEncontradoException;
 
     String cadastrarCliente(Cliente cliente, IBanco<Cliente, Long> banco)
-            throws ObjetoExistenteException, AcessoNegadoException;
+            throws ObjetoExistenteException, PermissaoNegadaException;
 
     String removerCliente(Long cpf, IBanco<Cliente, Long> banco)
-            throws ObjetoNaoEncontradoException, AcessoNegadoException;
+            throws ObjetoNaoEncontradoException, PermissaoNegadaException;
 
     String editarCliente(Cliente cliente, IBanco<Cliente, Long> banco) throws ObjetoNaoEncontradoException;
 

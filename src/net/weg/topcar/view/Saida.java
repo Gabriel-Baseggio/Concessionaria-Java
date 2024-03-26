@@ -5,7 +5,7 @@ public class Saida {
     public void escreva(String texto){
         System.out.print(texto);
     }
-    public void escreval(String texto){
+    public void escrevaL(String texto){
         System.out.println(texto);
     }
 

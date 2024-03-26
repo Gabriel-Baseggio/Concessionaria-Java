@@ -2,7 +2,7 @@ package net.weg.topcar.model.usuarios;
 
 import net.weg.topcar.dao.IBanco;
 import net.weg.topcar.model.veiculos.Veiculo;
-import net.weg.topcar.model.exceptions.AcessoNegadoException;
+import net.weg.topcar.model.exceptions.PermissaoNegadaException;
 import net.weg.topcar.model.exceptions.ObjetoExistenteException;
 import net.weg.topcar.model.exceptions.ObjetoNaoEncontradoException;
 import net.weg.topcar.model.exceptions.PrecoInvalidoException;
@@ -37,13 +37,13 @@ public class Gerente extends Vendedor implements IGerente {
     }
 
     @Override
-    public String cadastrarVeiculo(Veiculo veiculo, IBanco<Veiculo, Integer> banco) throws ObjetoExistenteException {
+    public String cadastrarVeiculo(Veiculo veiculo, IBanco<Veiculo, Long> banco) throws ObjetoExistenteException {
         banco.adicionar(veiculo);
         return "Veículo cadastrado!";
     }
 
     @Override
-    public String removerVeiculo(Integer codigo, IBanco<Veiculo, Integer> banco) throws ObjetoNaoEncontradoException {
+    public String removerVeiculo(Long codigo, IBanco<Veiculo, Long> banco) throws ObjetoNaoEncontradoException {
         banco.remover(codigo);
         return "Veículo removido!";
     }
@@ -60,13 +60,13 @@ public class Gerente extends Vendedor implements IGerente {
      * @throws ObjetoNaoEncontradoException
      */
     @Override
-    public String editarVeiculo(Veiculo veiculo, IBanco<Veiculo, Integer> banco) throws ObjetoNaoEncontradoException {
+    public String editarVeiculo(Veiculo veiculo, IBanco<Veiculo, Long> banco) throws ObjetoNaoEncontradoException {
         banco.alterar(veiculo.getCODIGO(), veiculo);
         return "Veículo editado!";
     }
 
     @Override
-    public String alterarPrecoVeiculo(Integer codigo, Double novoPreco, IBanco<Veiculo, Integer> banco)
+    public String alterarPrecoVeiculo(Long codigo, Double novoPreco, IBanco<Veiculo, Long> banco)
             throws PrecoInvalidoException, ObjetoNaoEncontradoException {
         Veiculo veiculo = banco.buscarUm(codigo);
         veiculo.setPreco(novoPreco);
@@ -76,9 +76,9 @@ public class Gerente extends Vendedor implements IGerente {
 
     @Override
     public String cadastrarCliente(Cliente cliente, IBanco<Cliente, Long> banco)
-            throws ObjetoExistenteException, AcessoNegadoException {
+            throws ObjetoExistenteException, PermissaoNegadaException {
         if(cliente instanceof Gerente)
-            throw new AcessoNegadoException();
+            throw new PermissaoNegadaException();
 
         banco.adicionar(cliente);
         return "Cliente cadastrado!";
@@ -86,10 +86,10 @@ public class Gerente extends Vendedor implements IGerente {
 
     @Override
     public String removerCliente(Long cpf, IBanco<Cliente, Long> banco)
-            throws ObjetoNaoEncontradoException, AcessoNegadoException {
+            throws ObjetoNaoEncontradoException, PermissaoNegadaException {
         Cliente cliente = banco.buscarUm(cpf);
         if(cliente instanceof Gerente)
-            throw new AcessoNegadoException();
+            throw new PermissaoNegadaException();
 
         banco.remover(cpf);
         return "Cliente removido!";
@@ -155,11 +155,11 @@ public class Gerente extends Vendedor implements IGerente {
         throw new RuntimeException("O usuário informado não é um vendedor!");
     }
 
-    @Override
-    public void vender(Veiculo veiculo, Cliente cliente) {
-        cliente.adicionarProprioVeiculo(veiculo);
-        this.setComissao(veiculo.getPreco() * 0.02);
-    }
+//    @Override
+//    public void vender(Veiculo veiculo, Cliente cliente) {
+//        cliente.adicionarProprioVeiculo(veiculo);
+//        this.setComissao(veiculo.getPreco() * 0.02);
+//    }
 
     @Override
     public String toString() {

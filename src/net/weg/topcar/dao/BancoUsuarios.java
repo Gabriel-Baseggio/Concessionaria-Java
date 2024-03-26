@@ -37,14 +37,13 @@ public class BancoUsuarios implements IBanco<Cliente, Long> {
     }
 
     @Override
-    public void remover(Long cpf) throws UsuarioNaoEncontradoException, AcessoNegadoException {
+    public void remover(Long cpf) throws UsuarioNaoEncontradoException, PermissaoNegadaException {
         try {
             Cliente cliente = this.buscarUm(cpf);
-            if(!(cliente instanceof Gerente)){
-                clientes.remove(cliente);
-            } else {
-                throw new AcessoNegadoException("O usuário é um gerente!");
+            if(cliente instanceof Gerente){
+                throw new PermissaoNegadaException("O usuário é um gerente!");
             }
+            clientes.remove(cliente);
         } catch (ObjetoNaoEncontradoException exception) {
             throw new UsuarioNaoEncontradoException(cpf);
         }

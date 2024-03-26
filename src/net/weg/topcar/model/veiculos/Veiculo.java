@@ -4,36 +4,38 @@ import net.weg.topcar.model.exceptions.PrecoInvalidoException;
 
 public abstract class Veiculo {
 
-    private final int CODIGO;
-    private double preco;
+    private final Long CODIGO;
+    private Double preco;
     private String placa;
-    private int ano;
+    private Long ano;
     private String modelo;
     private String marca;
-    private double kilometragem;
-    private String estado;
-    private boolean vendido;
+    private Double quilometragem;
+    private Boolean novo;
+    private Boolean vendido;
 
-    public Veiculo(int codigo, double preco, String placa, int ano, String modelo, String marca, double kilometragem, String estado) throws PrecoInvalidoException {
+    public Veiculo(Long codigo, Double preco, String placa, Long ano, String modelo,
+                   String marca, Double quilometragem, Boolean novo) throws PrecoInvalidoException {
         this.CODIGO = codigo;
         setPreco(preco);
         this.placa = placa;
         this.ano = ano;
         this.modelo = modelo;
         this.marca = marca;
-        this.kilometragem = kilometragem;
-        this.estado = estado;
+        this.quilometragem = quilometragem;
+        this.novo = novo;
+        this.vendido = false;
     }
 
-    public int getCODIGO() {
+    public Long getCODIGO() {
         return this.CODIGO;
     }
 
-    public double getPreco() {
+    public Double getPreco() {
         return this.preco;
     }
 
-    public void setPreco(double preco) throws PrecoInvalidoException {
+    public void setPreco(Double preco) throws PrecoInvalidoException {
         if (preco <= 0) {
             throw new PrecoInvalidoException();
         }
@@ -44,7 +46,7 @@ public abstract class Veiculo {
         return this.modelo;
     }
 
-    public boolean isVendido() {
+    public Boolean isVendido() {
         return this.vendido;
     }
 
@@ -60,8 +62,8 @@ public abstract class Veiculo {
                 "\nAno: " + this.ano +
                 "\nModelo: " + this.modelo +
                 "\nMarca: " + this.marca +
-                "\nKilometragem: " + this.kilometragem +
-                "\nEstado: " + this.estado +
+                "\nKilometragem: " + this.quilometragem +
+                "\nEstado: " + this.novo +
                 "\nVendido: " + (this.vendido ? "sim" : "não");
     }
 }
