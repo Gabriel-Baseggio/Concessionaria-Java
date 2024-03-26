@@ -7,8 +7,9 @@ public class Carro extends Veiculo {
     private String carroceria;
     private String itensExtra;
 
-    public Carro(int codigo, double preco, String placa, int ano, String modelo, String marca, double kilometragem, String estado, String carroceria, String itensExtra) throws PrecoInvalidoException {
-        super(codigo, preco, placa, ano, modelo, marca, kilometragem, estado);
+    public Carro(Long codigo, Double preco, String placa, Long ano, String modelo, String marca, Double quilometragem,
+                 Boolean novo, String carroceria, String itensExtra) throws PrecoInvalidoException {
+        super(codigo, preco, placa, ano, modelo, marca, quilometragem, novo);
         this.carroceria = carroceria;
         this.itensExtra = itensExtra;
     }

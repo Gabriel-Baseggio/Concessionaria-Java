@@ -32,8 +32,8 @@ public class UsuarioController {
             String senha = entradaSenha();
 
             if (usuarioLogado instanceof IGerente) {
-                Long escolha = selecionaTipoDeUsuario();
-                if (escolha == 1) {
+                Long tipo = selecionaTipoDeUsuario();
+                if (tipo == 1) {
                     Double salario = entradaSalario();
                     cadastroVendedor(nome, cpf, senha, salario);
                     return "Vendedor cadastrado com sucesso!";
@@ -271,11 +271,15 @@ public class UsuarioController {
     }
 
     private Long selecionaTipoDeUsuario() {
-        return entradaInteiro.leiaComSaidaEValidacao("""
-                Qual o perfil de usuário que você deseja cadastrar?
+        Long entrada;
+        do{
+            entrada = entradaInteiro.leiaComSaidaEValidacao("""
+                Qual o tipo de usuário que você deseja cadastrar?
                 1 - Vendedor;
                 2 - Cliente.
                 """, saida);
+        } while (entrada > 2);
+        return entrada;
     }
 
     private void cadastroVendedor(String nome, Long cpf, String senha, Double salario) throws ObjetoExistenteException {

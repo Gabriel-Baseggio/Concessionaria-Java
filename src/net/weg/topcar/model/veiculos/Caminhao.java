@@ -6,8 +6,9 @@ public class Caminhao extends Veiculo {
 
     private String tracao;
 
-    public Caminhao(int codigo, double preco, String placa, int ano, String modelo, String marca, double kilometragem, String estado, String tracao) throws PrecoInvalidoException {
-        super(codigo, preco, placa, ano, modelo, marca, kilometragem, estado);
+    public Caminhao(Long codigo, Double preco, String placa, Long ano, String modelo, String marca,
+                    Double quilometragem, Boolean novo, String tracao) throws PrecoInvalidoException {
+        super(codigo, preco, placa, ano, modelo, marca, quilometragem, novo);
         this.tracao = tracao;
     }
 
