@@ -1,15 +1,16 @@
 package net.weg.topcar.model.usuarios;
 
 import net.weg.topcar.dao.BancoUsuarios;
+import net.weg.topcar.dao.IBanco;
 import net.weg.topcar.model.exceptions.SenhaIncorretaException;
 import net.weg.topcar.model.exceptions.ObjetoNaoEncontradoException;
 
-public class LoginUsuario {
+public class Autenticacao {
 
-    private final BancoUsuarios bancoUsuarios;
+    private final IBanco<Cliente, Long> bancoUsuarios;
     private Cliente cliente;
 
-    public LoginUsuario(BancoUsuarios bancoUsuarios) {
+    public Autenticacao(IBanco<Cliente, Long> bancoUsuarios) {
         this.bancoUsuarios = bancoUsuarios;
     }
 

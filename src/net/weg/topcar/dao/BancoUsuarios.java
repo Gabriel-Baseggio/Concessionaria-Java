@@ -4,12 +4,17 @@ import net.weg.topcar.model.exceptions.*;
 import net.weg.topcar.model.usuarios.Cliente;
 import net.weg.topcar.model.usuarios.Gerente;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class BancoUsuarios implements IBanco<Cliente, Long> {
 
     private List<Cliente> clientes;
+
+    public BancoUsuarios() {
+        this.clientes = new ArrayList<>();
+    }
 
     @Override
     public List<Cliente> buscarTodos() {

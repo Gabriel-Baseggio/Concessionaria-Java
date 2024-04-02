@@ -12,6 +12,10 @@ public class Caminhao extends Veiculo {
         this.tracao = tracao;
     }
 
+    public String getTracao() {
+        return tracao;
+    }
+
     @Override
     public String toString() {
         return super.toString() +

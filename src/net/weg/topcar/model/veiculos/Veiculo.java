@@ -35,6 +35,30 @@ public abstract class Veiculo {
         return this.preco;
     }
 
+    public String getPlaca() {
+        return placa;
+    }
+
+    public Long getAno() {
+        return ano;
+    }
+
+    public String getMarca() {
+        return marca;
+    }
+
+    public Double getQuilometragem() {
+        return quilometragem;
+    }
+
+    public Boolean getNovo() {
+        return novo;
+    }
+
+    public Boolean getVendido() {
+        return vendido;
+    }
+
     public void setPreco(Double preco) throws PrecoInvalidoException {
         if (preco <= 0) {
             throw new PrecoInvalidoException();

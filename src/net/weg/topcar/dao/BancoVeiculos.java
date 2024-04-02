@@ -5,12 +5,17 @@ import net.weg.topcar.model.usuarios.Cliente;
 import net.weg.topcar.model.usuarios.Gerente;
 import net.weg.topcar.model.veiculos.Veiculo;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class BancoVeiculos implements IBanco<Veiculo, Long> {
 
     private List<Veiculo> veiculos;
+
+    public BancoVeiculos() {
+        this.veiculos = new ArrayList<>();
+    }
 
     @Override
     public List<Veiculo> buscarTodos() {

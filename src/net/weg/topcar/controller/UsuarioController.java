@@ -1,7 +1,5 @@
 package net.weg.topcar.controller;
 
-import net.weg.topcar.dao.BancoUsuarios;
-import net.weg.topcar.dao.BancoVeiculos;
 import net.weg.topcar.dao.IBanco;
 import net.weg.topcar.model.exceptions.*;
 import net.weg.topcar.model.usuarios.*;
@@ -14,68 +12,82 @@ import java.util.List;
 public class UsuarioController {
 
     private static Cliente usuarioLogado;
-    private IBanco<Cliente, Long> bancoUsuarios = new BancoUsuarios();
-    private IBanco<Veiculo, Long> bancoVeiculos = new BancoVeiculos();
+    private IBanco<Cliente, Long> bancoUsuarios;
+    private IBanco<Veiculo, Long> bancoVeiculos;
 
     private final Entrada<String> entradaTexto = new EntradaTexto();
     private final Entrada<Long> entradaInteiro = new EntradaInteiro();
     private final Entrada<Double> entradaDecimal = new EntradaDecimal();
     private final Saida saida = new Saida();
+    private final Autenticacao autenticacao;
+
+    public UsuarioController(IBanco<Cliente, Long> bancoUsuarios, IBanco<Veiculo, Long> bancoVeiculos) {
+        this.bancoUsuarios = bancoUsuarios;
+        this.bancoVeiculos = bancoVeiculos;
+        this.autenticacao = new Autenticacao(bancoUsuarios);
+    }
 
     //Cliente
-    public String cadastroUsuario() {
+    public void cadastrarUsuario() throws PermissaoNegadaException {
         try {
             Long cpf = entradaCPF();
             validarCPF(cpf);
 
             String nome = entradaNome();
-            String senha = entradaSenha();
+            String senha = entradaSenhaComConfirmacao();
 
+            Cliente novoCliente = null;
             if (usuarioLogado instanceof IGerente) {
                 Long tipo = selecionaTipoDeUsuario();
                 if (tipo == 1) {
                     Double salario = entradaSalario();
-                    cadastroVendedor(nome, cpf, senha, salario);
-                    return "Vendedor cadastrado com sucesso!";
+                    novoCliente = new Vendedor(nome, cpf, senha, salario);
                 }
             }
-            cadastroCliente(nome, cpf, senha);
-            return "Cliente cadastrado com sucesso!";
+            if (novoCliente == null) {
+                novoCliente = new Cliente(nome, cpf, senha);
+            }
+            bancoUsuarios.adicionar(novoCliente);
+            saida.escrevaL("Usuário cadastrado com sucesso!");
         } catch (ObjetoExistenteException e) {
-            return e.getMessage();
+            saida.escrevaL(e.getMessage());
         }
-
     }
 
     //Cliente
-    public void VerMeusVeiculos(){
+    public Cliente login() throws ObjetoNaoEncontradoException {
+        Long cpf = entradaCPF();
+        String senha = entradaSenhaSemConfirmacao();
+
+        usuarioLogado = autenticacao.login(cpf, senha);
+        return usuarioLogado;
+    }
+
+    //Cliente
+    public void verMeusVeiculos() {
         List<Veiculo> listaMeusVeiculos = usuarioLogado.verMeusVeiculos();
         listaMeusVeiculos.forEach(veiculo -> saida.escrevaL(veiculo.toString()));
     }
 
     //Vendedor
-    public void verPagamento() {
-        try {
-            Vendedor vendedor = isVendedor();
-            saida.escrevaL(vendedor.verPagamento());
-        } catch (PermissaoNegadaException e) {
-            saida.escrevaL(e.getMessage());
-        }
+    public void verPagamento() throws PermissaoNegadaException {
+        Vendedor vendedor = isVendedor();
+        saida.escrevaL(vendedor.verPagamento());
     }
 
     //Vendedor
-    public void verUsuario() {
+    public void verUsuario() throws PermissaoNegadaException {
         try {
             isVendedor();
             Cliente cliente = buscarUsuario();
             saida.escrevaL(cliente.toString());
-        } catch (PermissaoNegadaException | ObjetoNaoEncontradoException e) {
+        } catch (ObjetoNaoEncontradoException e) {
             saida.escrevaL(e.getMessage());
         }
     }
 
     //Vendedor
-    public void vender() {
+    public void vender() throws PermissaoNegadaException {
         try {
             Vendedor vendedor = isVendedor();
 
@@ -88,24 +100,24 @@ public class UsuarioController {
             vendedor.vender(veiculo, cliente);
 
             atualizarEnvolvidosNaVenda(cliente, vendedor, veiculo);
-        } catch (PermissaoNegadaException | ObjetoNaoEncontradoException | FalhaNaCompraException e) {
+        } catch (ObjetoNaoEncontradoException | FalhaNaCompraException e) {
             saida.escrevaL(e.getMessage());
         }
     }
 
     //Gerente
-    public void removerUsuario() {
+    public void removerUsuario() throws PermissaoNegadaException {
         try {
             isGerente();
             Long cpf = entradaCPF();
             bancoUsuarios.remover(cpf);
-        } catch (PermissaoNegadaException | ObjetoNaoEncontradoException e) {
+        } catch (ObjetoNaoEncontradoException e) {
             saida.escrevaL(e.getMessage());
         }
     }
 
     //Gerente
-    public void editarUsuario() {
+    public void editarUsuario() throws PermissaoNegadaException {
         try {
             isGerente();
             Cliente cliente = buscarUsuario();
@@ -116,56 +128,45 @@ public class UsuarioController {
 
             String nome = entradaNome(cliente.getNome());
 
+            Long cpf = cliente.getCPF();
+            Cliente clienteEditado;
             if (cliente instanceof Vendedor vendedor) {
                 Double salario = entradaSalario(vendedor.getSalario());
-                bancoUsuarios.alterar(cliente.getCPF(),
-                        new Vendedor(nome, vendedor.getCPF(), vendedor.getSenha(), salario));
+                clienteEditado = new Vendedor(nome, cpf, vendedor.getSenha(), salario);
             } else {
-                bancoUsuarios.alterar(cliente.getCPF(),
-                        new Cliente(nome, cliente.getCPF(), cliente.getSenha()));
+                clienteEditado = new Cliente(nome, cpf, cliente.getSenha());
             }
-        } catch (PermissaoNegadaException | ObjetoNaoEncontradoException e) {
+            bancoUsuarios.alterar(cpf, clienteEditado);
+        } catch (ObjetoNaoEncontradoException e) {
             saida.escrevaL(e.getMessage());
         }
     }
 
     //Gerente
-    public void verVendedores() {
-        try {
-            isGerente();
-            List<Vendedor> listaVendedores = buscarVendedores();
-            saida.escrevaL(listaVendedores.toString());
-        } catch (PermissaoNegadaException e) {
-            saida.escrevaL(e.getMessage());
-        }
+    public void verVendedores() throws PermissaoNegadaException {
+        isGerente();
+        List<Vendedor> listaVendedores = buscarVendedores();
+        saida.escrevaL(listaVendedores.toString());
     }
 
     //Gerente
-    public void verClientes() {
-        try {
-            isGerente();
-            List<Cliente> listaClientes = bancoUsuarios.buscarTodos();
-            saida.escrevaL(listaClientes.toString());
-        } catch (PermissaoNegadaException e) {
-            saida.escrevaL(e.getMessage());
-        }
+    public void verClientes() throws PermissaoNegadaException {
+        isGerente();
+        List<Cliente> listaClientes = bancoUsuarios.buscarTodos();
+        saida.escrevaL(listaClientes.toString());
     }
 
     //Gerente
-    public void verPagamentoVendedores() {
-        try {
-            isGerente();
-            List<Vendedor> listaVendedores = buscarVendedores();
-            listaVendedores.forEach(vendedor -> {
-                saida.escrevaL(vendedor.verPagamentoComNome());
-            });
-        } catch (PermissaoNegadaException e) {
-            saida.escrevaL(e.getMessage());
-        }
+    public void verPagamentoVendedores() throws PermissaoNegadaException {
+        isGerente();
+        List<Vendedor> listaVendedores = buscarVendedores();
+        listaVendedores.forEach(vendedor -> {
+            saida.escrevaL(vendedor.verPagamentoComNome());
+        });
     }
 
     //Gerente
-    public void verPagamentoVendedor() {
+    public void verPagamentoVendedor() throws PermissaoNegadaException {
         try {
             isGerente();
 
@@ -176,7 +177,7 @@ public class UsuarioController {
             } else {
                 throw new TipoDeUsuarioInvalidoException(cliente);
             }
-        } catch (PermissaoNegadaException | ObjetoNaoEncontradoException | TipoDeUsuarioInvalidoException e) {
+        } catch (ObjetoNaoEncontradoException | TipoDeUsuarioInvalidoException e) {
             saida.escrevaL(e.getMessage());
         }
     }
@@ -250,7 +251,7 @@ public class UsuarioController {
         return novoNome.isBlank() ? nome : novoNome;
     }
 
-    private String entradaSenha() {
+    private String entradaSenhaComConfirmacao() {
         String senha, confSenha;
 
         do {
@@ -260,6 +261,11 @@ public class UsuarioController {
 
         return senha;
     }
+
+    private String entradaSenhaSemConfirmacao() {
+        return entradaTexto.leiaComSaidaEValidacao("Senha: ", saida);
+    }
+
 
     private Double entradaSalario() {
         return entradaDecimal.leiaComSaidaEValidacao("Salário: ", saida);
@@ -272,21 +278,21 @@ public class UsuarioController {
 
     private Long selecionaTipoDeUsuario() {
         Long entrada;
-        do{
+        do {
             entrada = entradaInteiro.leiaComSaidaEValidacao("""
-                Qual o tipo de usuário que você deseja cadastrar?
-                1 - Vendedor;
-                2 - Cliente.
-                """, saida);
+                    Qual o tipo de usuário que você deseja cadastrar?
+                    1 - Vendedor;
+                    2 - Cliente.
+                    """, saida);
         } while (entrada > 2);
         return entrada;
     }
 
-    private void cadastroVendedor(String nome, Long cpf, String senha, Double salario) throws ObjetoExistenteException {
+    private void cadastrarVendedor(String nome, Long cpf, String senha, Double salario) throws ObjetoExistenteException {
         bancoUsuarios.adicionar(new Vendedor(nome, cpf, senha, salario));
     }
 
-    private void cadastroCliente(String nome, Long cpf, String senha) throws ObjetoExistenteException {
+    private void cadastrarCliente(String nome, Long cpf, String senha) throws ObjetoExistenteException {
         bancoUsuarios.adicionar(new Cliente(nome, cpf, senha));
     }
 

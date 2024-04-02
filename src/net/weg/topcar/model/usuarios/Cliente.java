@@ -35,11 +35,10 @@ public class Cliente implements ICliente {
 
 
     public String menu() {
-        return """                        
-                0 - Logout
-                1 - Ver veículos em estoque
-                2 - Ver detalhes de um veículo
-                3 - Ver meus veículos
+        return """          
+                1 - Ver veículos em estoque;
+                2 - Ver detalhes de um veículo;
+                3 - Ver meus veículos;
                 """;
     }
 

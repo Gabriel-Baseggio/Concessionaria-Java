@@ -14,6 +14,14 @@ public class Carro extends Veiculo {
         this.itensExtra = itensExtra;
     }
 
+    public String getCarroceria() {
+        return carroceria;
+    }
+
+    public String getItensExtra() {
+        return itensExtra;
+    }
+
     @Override
     public String toString() {
         return super.toString() +

@@ -16,6 +16,18 @@ public class Moto extends Veiculo {
         this.qtdMarchas = qtdMarchas;
     }
 
+    public String getTipoMotor() {
+        return tipoMotor;
+    }
+
+    public Long getCilindradas() {
+        return cilindradas;
+    }
+
+    public Long getQtdMarchas() {
+        return qtdMarchas;
+    }
+
     @Override
     public String toString() {
         return super.toString() +

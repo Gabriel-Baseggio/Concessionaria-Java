@@ -18,9 +18,9 @@ public class Vendedor extends Cliente implements IVendedor {
     public String menu() {
         return super.menu() +
                 """
-                        4 - Vender veículo
-                        5 - Procurar cliente
-                        6 - Ver pagamento
+                        4 - Vender veículo;
+                        5 - Procurar cliente;
+                        6 - Ver pagamento;
                         """;
     }
 

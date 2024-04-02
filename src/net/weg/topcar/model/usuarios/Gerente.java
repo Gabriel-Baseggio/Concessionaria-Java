@@ -22,17 +22,17 @@ public class Gerente extends Vendedor implements IGerente {
     public String menu() {
         return super.menu() +
                 """
-                        7 - Cadastrar veículo
-                        8 - Remover veículo
-                        9 - Editar veículo
-                        10 - Alterar preço de um veículo
-                        11 - Cadastrar vendedor/cliente
-                        12 - Remover vendedor/cliente
-                        13 - Editar vendedor/cliente
-                        14 - Ver vendedores
-                        15 - Ver clientes
-                        16 - Ver pagamento dos vendedores
-                        17 - Ver pagamento de um vendedor
+                        7 - Cadastrar veículo;
+                        8 - Remover veículo;
+                        9 - Editar veículo;
+                        10 - Alterar preço de um veículo;
+                        11 - Cadastrar vendedor/cliente;
+                        12 - Remover vendedor/cliente;
+                        13 - Editar vendedor/cliente;
+                        14 - Ver vendedores;
+                        15 - Ver clientes;
+                        16 - Ver pagamento dos vendedores;
+                        17 - Ver pagamento de um vendedor;
                         """;
     }
 

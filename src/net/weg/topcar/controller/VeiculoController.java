@@ -5,7 +5,9 @@ import net.weg.topcar.dao.BancoVeiculos;
 import net.weg.topcar.dao.IBanco;
 import net.weg.topcar.model.exceptions.*;
 import net.weg.topcar.model.usuarios.Cliente;
+import net.weg.topcar.model.usuarios.Gerente;
 import net.weg.topcar.model.usuarios.IGerente;
+import net.weg.topcar.model.usuarios.Vendedor;
 import net.weg.topcar.model.veiculos.Caminhao;
 import net.weg.topcar.model.veiculos.Carro;
 import net.weg.topcar.model.veiculos.Moto;
@@ -18,13 +20,16 @@ import java.util.List;
 public class VeiculoController {
 
     private static Cliente usuarioLogado;
-    private IBanco<Cliente, Long> bancoUsuarios = new BancoUsuarios();
-    private IBanco<Veiculo, Long> bancoVeiculos = new BancoVeiculos();
+    private IBanco<Veiculo, Long> bancoVeiculos;
 
     private final Entrada<String> entradaTexto = new EntradaTexto();
     private final Entrada<Long> entradaInteiro = new EntradaInteiro();
     private final Entrada<Double> entradaDecimal = new EntradaDecimal();
     private final Saida saida = new Saida();
+
+    public VeiculoController(IBanco<Veiculo, Long> bancoVeiculos) {
+        this.bancoVeiculos = bancoVeiculos;
+    }
 
     public void verVeiculos() {
         List<Veiculo> listaVeiculos = bancoVeiculos.buscarTodos();
@@ -45,17 +50,17 @@ public class VeiculoController {
         }
     }
 
-    public void removerVeiculo() {
+    public void removerVeiculo() throws PermissaoNegadaException {
         try {
             isGerente();
             Long codigo = entradaCodigo();
             bancoVeiculos.remover(codigo);
-        } catch (PermissaoNegadaException | ObjetoNaoEncontradoException e) {
+        } catch (ObjetoNaoEncontradoException e) {
             saida.escrevaL(e.getMessage());
         }
     }
 
-    public void alterarPreco() {
+    public void alterarPreco() throws PermissaoNegadaException {
         try {
             isGerente();
 
@@ -66,12 +71,12 @@ public class VeiculoController {
             veiculo.setPreco(preco);
 
             bancoVeiculos.alterar(codigo, veiculo);
-        } catch (PermissaoNegadaException | ObjetoNaoEncontradoException | PrecoInvalidoException e) {
+        } catch (ObjetoNaoEncontradoException | PrecoInvalidoException e) {
             saida.escrevaL(e.getMessage());
         }
     }
 
-    public void cadastroVeiculo() {
+    public void cadastrarVeiculo() throws PermissaoNegadaException {
         try {
             isGerente();
 
@@ -81,32 +86,86 @@ public class VeiculoController {
             Double preco = entradaPreco();
             validarPreco(preco);
 
-            String placa = entradaPlaca();
             Long ano = entradaAno();
             String modelo = entradaModelo();
             String marca = entradaMarca();
-            Double quilometragem = entradaQuilometragem();
             Boolean novo = entradaNovo();
 
+            Double quilometragem = 0.0;
+            String placa = "";
+            if (!novo){
+                quilometragem = entradaQuilometragem();
+                placa = entradaPlaca();
+            }
+
             Long tipo = selecionaTipoDeVeiculo();
+            Veiculo novoVeiculo;
             if (tipo == 1) {
                 String carroceria = entradaCarroceria();
                 String itensExtra = entradaItensExtra();
-                cadastroCarro(codigo, preco, placa, ano, modelo, marca, quilometragem, novo, carroceria, itensExtra);
+                novoVeiculo = new Carro(codigo, preco, placa, ano, modelo, marca, quilometragem, novo,
+                        carroceria, itensExtra);
             } else if (tipo == 2) {
                 String tipoMotor = entradaTipoMotor();
                 Long cilindradas = entradaCilindradas();
                 Long qtdMarchas = entradaQtdMarchas();
-                cadastroMoto(codigo, preco, placa, ano, modelo, marca, quilometragem, novo, tipoMotor,
+                novoVeiculo = new Moto(codigo, preco, placa, ano, modelo, marca, quilometragem, novo, tipoMotor,
                         cilindradas, qtdMarchas);
             } else {
                 String tracao = entradaTracao();
-                cadastroCaminhao(codigo, preco, placa, ano, modelo, marca, quilometragem, novo, tracao);
+                novoVeiculo = new Caminhao(codigo, preco, placa, ano, modelo, marca, quilometragem, novo, tracao);
             }
-
-        } catch (PermissaoNegadaException | ObjetoExistenteException | PrecoInvalidoException e) {
+            bancoVeiculos.adicionar(novoVeiculo);
+        } catch (ObjetoExistenteException | PrecoInvalidoException e) {
             saida.escrevaL(e.getMessage());
         }
+    }
+
+    public void editarVeiculo() throws PermissaoNegadaException {
+        try {
+            isGerente();
+            Veiculo veiculo = buscarVeiculo();
+
+            Double preco = entradaPreco(veiculo.getPreco());
+            validarPreco(preco);
+
+            Long ano = entradaAno(veiculo.getAno());
+            String modelo = entradaModelo(veiculo.getModelo());
+            String marca = entradaMarca(veiculo.getMarca());
+            Boolean novo = entradaNovo();
+
+            Double quilometragem = 0.0;
+            String placa = "";
+            if (!novo){
+                quilometragem = entradaQuilometragem(veiculo.getQuilometragem());
+                placa = entradaPlaca(veiculo.getPlaca());
+            }
+
+            Long codigo = veiculo.getCODIGO();
+            Veiculo veiculoEditado;
+            if (veiculo instanceof Carro carro) {
+                String carroceria = entradaCarroceria(carro.getCarroceria());
+                String itensExtra = entradaItensExtra(carro.getItensExtra());
+                veiculoEditado = new Carro(codigo, preco, placa, ano, modelo, marca, quilometragem, novo, carroceria, itensExtra);
+            } else if (veiculo instanceof Moto moto) {
+                String tipoMotor = entradaTipoMotor(moto.getTipoMotor());
+                Long cilindradas = entradaCilindradas(moto.getCilindradas());
+                Long qtdMarchas = entradaQtdMarchas(moto.getQtdMarchas());
+                veiculoEditado = new Moto(codigo, preco, placa, ano, modelo, marca, quilometragem, novo, tipoMotor,
+                        cilindradas, qtdMarchas);
+            } else {
+                String tracao = entradaTracao(((Caminhao) veiculo).getTracao());
+                veiculoEditado = new Caminhao(codigo, preco, placa, ano, modelo, marca, quilometragem, novo, tracao);
+            }
+            bancoVeiculos.alterar(codigo, veiculoEditado);
+        } catch (ObjetoNaoEncontradoException | PrecoInvalidoException e) {
+            saida.escrevaL(e.getMessage());
+        }
+    }
+
+    private Veiculo buscarVeiculo() throws ObjetoNaoEncontradoException {
+        Long codigo = entradaCodigo();
+        return bancoVeiculos.buscarUm(codigo);
     }
 
     private void validarCodigo(Long codigo) throws VeiculoExistenteException {
@@ -134,28 +193,6 @@ public class VeiculoController {
         return entrada;
     }
 
-    private void cadastroCarro(Long codigo, Double preco, String placa, Long ano, String modelo, String marca,
-                               Double quilometragem, Boolean novo, String carroceria,
-                               String itensExtra) throws PrecoInvalidoException, ObjetoExistenteException {
-        Carro carro = new Carro(codigo, preco, placa, ano, modelo, marca, quilometragem, novo, carroceria, itensExtra);
-        bancoVeiculos.adicionar(carro);
-    }
-
-    private void cadastroMoto(Long codigo, Double preco, String placa, Long ano, String modelo, String marca,
-                              Double quilometragem, Boolean novo, String tipoMotor, Long cilindradas,
-                              Long qtdMarchas) throws PrecoInvalidoException, ObjetoExistenteException {
-        Moto moto = new Moto(codigo, preco, placa, ano, modelo, marca, quilometragem, novo, tipoMotor, cilindradas,
-                qtdMarchas);
-        bancoVeiculos.adicionar(moto);
-    }
-
-    private void cadastroCaminhao(Long codigo, Double preco, String placa, Long ano, String modelo, String marca,
-                               Double quilometragem, Boolean novo,
-                                  String tracao) throws PrecoInvalidoException, ObjetoExistenteException {
-        Caminhao caminhao = new Caminhao(codigo, preco, placa, ano, modelo, marca, quilometragem, novo, tracao);
-        bancoVeiculos.adicionar(caminhao);
-    }
-
     private Long entradaCodigo() {
         return entradaInteiro.leiaComSaidaEValidacao("Código: ", saida);
     }
@@ -173,20 +210,45 @@ public class VeiculoController {
         return entradaTexto.leiaComSaidaEValidacao("Placa: ", saida);
     }
 
+    private String entradaPlaca(String placa) {
+        String novaPlaca = entradaTexto.leiaComSaida("Placa: ", saida);
+        return novaPlaca.isBlank() ? placa : novaPlaca;
+    }
+
     private Long entradaAno() {
         return entradaInteiro.leiaComSaidaEValidacao("Ano: ", saida);
+    }
+
+    private Long entradaAno(Long ano) {
+        Long novoAno = entradaInteiro.leiaComSaida("Ano: ", saida);
+        return novoAno <= 0 ? ano : novoAno ;
     }
 
     private String entradaModelo() {
         return entradaTexto.leiaComSaidaEValidacao("Modelo: ", saida);
     }
 
+    private String entradaModelo(String modelo) {
+        String novoModelo = entradaTexto.leiaComSaida("Modelo: ", saida);
+        return novoModelo.isBlank() ? modelo : novoModelo ;
+    }
+
     private String entradaMarca() {
         return entradaTexto.leiaComSaidaEValidacao("Marca: ", saida);
     }
 
+    private String entradaMarca(String marca) {
+        String novaMarcha = entradaTexto.leiaComSaida("Marca: ", saida);
+        return novaMarcha.isBlank() ? marca : novaMarcha ;
+    }
+
     private Double entradaQuilometragem() {
         return entradaDecimal.leiaComSaidaEValidacao("Quilometragem: ", saida);
+    }
+
+    private Double entradaQuilometragem(Double quilometragem) {
+        Double novaQuilometragem = entradaDecimal.leiaComSaida("Quilometragem: ", saida);
+        return novaQuilometragem <= 0 ? quilometragem : novaQuilometragem;
     }
 
     private Boolean entradaNovo() {
@@ -205,23 +267,54 @@ public class VeiculoController {
         return entradaTexto.leiaComSaidaEValidacao("Carroceria: ", saida);
     }
 
+    private String entradaCarroceria(String carroceria) {
+        String novaCarroceria = entradaTexto.leiaComSaida("Carroceria: ", saida);
+        return novaCarroceria.isBlank() ? carroceria : novaCarroceria;
+    }
+
     private String entradaItensExtra() {
         return entradaTexto.leiaComSaidaEValidacao("Itens extra: ", saida);
+    }
+
+    private String entradaItensExtra(String itensExtra) {
+        String novosItensExtra = entradaTexto.leiaComSaida("Itens extra: ", saida);
+        return novosItensExtra.isBlank() ? itensExtra : novosItensExtra;
     }
 
     private String entradaTipoMotor() {
         return entradaTexto.leiaComSaidaEValidacao("Tipo do motor: ", saida);
     }
+
+    private String entradaTipoMotor(String tipoMotor) {
+        String novoTipoMotor = entradaTexto.leiaComSaida("Tipo do motor: ", saida);
+        return novoTipoMotor.isBlank() ? tipoMotor : novoTipoMotor;
+    }
+
     private Long entradaCilindradas() {
         return entradaInteiro.leiaComSaidaEValidacao("Cilindradas: ", saida);
+    }
+
+    private Long entradaCilindradas(Long cilindradas) {
+        Long novasCilindradas = entradaInteiro.leiaComSaida("Cilindradas: ", saida);
+        return novasCilindradas <= 0 ? cilindradas : novasCilindradas;
     }
 
     private Long entradaQtdMarchas() {
         return entradaInteiro.leiaComSaidaEValidacao("Quantidade de marchas: ", saida);
     }
 
+    private Long entradaQtdMarchas(Long qtdMarchas) {
+        Long novaQtdMarchas = entradaInteiro.leiaComSaida("Quantidade de marchas: ", saida);
+        return novaQtdMarchas <= 0 ? qtdMarchas : novaQtdMarchas;
+    }
+
     private String entradaTracao() {
         return entradaTexto.leiaComSaidaEValidacao("Tração: ", saida);
+    }
+
+    private String entradaTracao(String tracao) {
+        String novaTracao = entradaTexto.leiaComSaida("Tração: ", saida);
+        return novaTracao.isBlank() ? tracao : novaTracao;
     }
 
     private void isGerente() throws PermissaoNegadaException {
