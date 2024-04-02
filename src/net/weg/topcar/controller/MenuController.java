@@ -82,8 +82,8 @@ public class MenuController {
     private void menuDoUsuario() {
 
         do {
-            saida.escrevaL(usuarioLogado.menu());
-            saida.escrevaL("0 - Logout.");
+            saida.escreva(usuarioLogado.menu());
+            saida.escreva("0 - Logout.\n> ");
             int escolha = (entradaInteiro.leia()).intValue();
 
             try {
@@ -120,7 +120,11 @@ public class MenuController {
                     case 17 -> usuarioController.verPagamentoVendedor();
                 }
             } catch (PermissaoNegadaException e) {
-                saida.escrevaL("Opção inválida!");
+                try {
+                    throw new OpcaoInvalidaException();
+                } catch (OpcaoInvalidaException ex) {
+                    saida.escrevaL(ex.getMessage());
+                }
             }
 
         } while (usuarioLogado != null);
