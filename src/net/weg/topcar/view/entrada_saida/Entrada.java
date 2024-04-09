@@ -1,4 +1,4 @@
-package net.weg.topcar.view;
+package net.weg.topcar.view.entrada_saida;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;

@@ -1,24 +1,14 @@
-package net.weg.topcar.view;
+package net.weg.topcar.view.componentes.formularios.usuario;
 
 import net.weg.topcar.controller.UsuarioController;
 import net.weg.topcar.model.exceptions.PermissaoNegadaException;
 import net.weg.topcar.model.usuarios.Vendedor;
+import net.weg.topcar.view.UsuarioAutenticadoFront;
+import net.weg.topcar.view.componentes.formularios.Formulario;
 
 public class FormularioUsuario extends Formulario {
 
-    protected UsuarioAutenticado usuarioAutenticado;
     protected UsuarioController usuarioController;
-
-    protected void isGerente(){
-        super.isGerente(usuarioAutenticado.getUsuarioAutenticado());
-    }
-
-    protected Vendedor isVendedor() throws PermissaoNegadaException {
-        if (usuarioAutenticado.getUsuarioAutenticado() instanceof Vendedor vendedor) {
-            return vendedor;
-        }
-        throw new PermissaoNegadaException("O usuário não é um vendedor.");
-    }
 
     protected Long entradaCPF() {
         return entradaInteiro.leiaComSaidaEValidacao("Cpf: ", saida);

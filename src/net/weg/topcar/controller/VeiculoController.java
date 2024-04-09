@@ -1,21 +1,15 @@
 package net.weg.topcar.controller;
 
-import net.weg.topcar.dao.BancoUsuarios;
-import net.weg.topcar.dao.BancoVeiculos;
-import net.weg.topcar.dao.IBanco;
 import net.weg.topcar.model.exceptions.*;
 import net.weg.topcar.model.usuarios.Cliente;
-import net.weg.topcar.model.usuarios.Gerente;
 import net.weg.topcar.model.usuarios.IGerente;
-import net.weg.topcar.model.usuarios.Vendedor;
 import net.weg.topcar.model.veiculos.Caminhao;
 import net.weg.topcar.model.veiculos.Carro;
 import net.weg.topcar.model.veiculos.Moto;
 import net.weg.topcar.model.veiculos.Veiculo;
 import net.weg.topcar.service.VeiculoService;
-import net.weg.topcar.view.*;
+import net.weg.topcar.view.entrada_saida.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class VeiculoController {
@@ -38,6 +32,10 @@ public class VeiculoController {
             saida.escrevaL(veiculo.toString());
         });
     }
+
+//    public Veiculo buscarVeiculo(Long codigo) throws ObjetoNaoEncontradoException {
+//
+//    }
 
     public void verVeiculo() {
         try {
@@ -159,5 +157,4 @@ public class VeiculoController {
             throw new PermissaoNegadaException("O usuário não é um gerente.");
         }
     }
-
 }

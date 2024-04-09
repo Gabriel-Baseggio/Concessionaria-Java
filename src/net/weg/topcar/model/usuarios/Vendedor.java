@@ -1,7 +1,7 @@
 package net.weg.topcar.model.usuarios;
 
 import net.weg.topcar.dao.IBanco;
-import net.weg.topcar.model.exceptions.FalhaNaCompraException;
+import net.weg.topcar.model.exceptions.FalhaNaVendaException;
 import net.weg.topcar.model.veiculos.Veiculo;
 import net.weg.topcar.model.exceptions.ObjetoNaoEncontradoException;
 
@@ -33,12 +33,12 @@ public class Vendedor extends Cliente implements IVendedor {
     }
 
     @Override
-    public void vender(Veiculo veiculo, Cliente cliente) throws FalhaNaCompraException {
+    public void vender(Veiculo veiculo, Cliente cliente) throws FalhaNaVendaException {
         if(!veiculo.isVendido()){
             cliente.adicionarProprioVeiculo(veiculo);
             this.setComissao(veiculo.getPreco() * 0.01);
         } else {
-            throw new FalhaNaCompraException("O veículo já foi comprado!");
+            throw new FalhaNaVendaException("O veículo já foi comprado!");
         }
     }
 

@@ -1,6 +1,7 @@
-package net.weg.topcar.view;
+package net.weg.topcar.view.componentes.formularios.veiculo;
 
 import net.weg.topcar.controller.VeiculoController;
+import net.weg.topcar.view.componentes.formularios.Formulario;
 
 public class FormularioVeiculo extends Formulario {
 

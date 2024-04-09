@@ -1,4 +1,4 @@
-package net.weg.topcar.view;
+package net.weg.topcar.view.componentes.formularios.veiculo;
 
 import net.weg.topcar.model.exceptions.ObjetoExistenteException;
 import net.weg.topcar.model.exceptions.PermissaoNegadaException;

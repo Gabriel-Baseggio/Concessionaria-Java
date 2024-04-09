@@ -8,10 +8,10 @@ import net.weg.topcar.model.exceptions.PermissaoNegadaException;
 import net.weg.topcar.model.usuarios.Cliente;
 import net.weg.topcar.model.usuarios.Gerente;
 import net.weg.topcar.model.usuarios.Vendedor;
-import net.weg.topcar.view.Entrada;
-import net.weg.topcar.view.EntradaInteiro;
-import net.weg.topcar.view.EntradaTexto;
-import net.weg.topcar.view.Saida;
+import net.weg.topcar.view.entrada_saida.Entrada;
+import net.weg.topcar.view.entrada_saida.EntradaInteiro;
+import net.weg.topcar.view.entrada_saida.EntradaTexto;
+import net.weg.topcar.view.entrada_saida.Saida;
 
 public class MenuController {
 

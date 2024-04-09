@@ -1,4 +1,4 @@
-package net.weg.topcar.view;
+package net.weg.topcar.view.componentes.formularios.usuario;
 
 import net.weg.topcar.model.exceptions.ObjetoNaoEncontradoException;
 import net.weg.topcar.model.exceptions.PermissaoNegadaException;
@@ -8,9 +8,7 @@ import net.weg.topcar.model.usuarios.Vendedor;
 
 public class FormularioUsuarioEdicao extends FormularioUsuario {
 
-
-
-    public void editarUsuario() {
+    public void edicaoUsuario() {
         try {
             isGerente();
 

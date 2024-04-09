@@ -1,15 +1,15 @@
-package net.weg.topcar.view;
+package net.weg.topcar.view.componentes.formularios.usuario;
 
-import net.weg.topcar.controller.UsuarioController;
 import net.weg.topcar.model.exceptions.ObjetoExistenteException;
 import net.weg.topcar.model.exceptions.PermissaoNegadaException;
 import net.weg.topcar.model.usuarios.Cliente;
 import net.weg.topcar.model.usuarios.IGerente;
 import net.weg.topcar.model.usuarios.Vendedor;
+import net.weg.topcar.view.UsuarioAutenticadoFront;
 
 public class FormularioUsuarioCadastro extends FormularioUsuario{
 
-    public void cadastrarUsuario() throws PermissaoNegadaException {
+    public void cadastroUsuario() throws PermissaoNegadaException {
         try {
             Long cpf = entradaCPF();
             usuarioController.validarCPF(cpf);
@@ -18,7 +18,8 @@ public class FormularioUsuarioCadastro extends FormularioUsuario{
             String senha = entradaSenhaComConfirmacao();
 
             Cliente novoCliente = null;
-            if (usuarioAutenticado.getUsuarioAutenticado() instanceof IGerente) {
+
+            if (UsuarioAutenticadoFront.getUsuario() instanceof IGerente) {
                 Long tipo = selecionaTipoDeUsuario();
                 if (tipo == 1) {
                     Double salario = entradaSalario();
