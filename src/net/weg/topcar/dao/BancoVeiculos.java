@@ -33,12 +33,13 @@ public class BancoVeiculos implements IBanco<Veiculo, Long> {
     }
 
     @Override
-    public void adicionar(Veiculo veiculo) throws VeiculoExistenteException {
+    public Veiculo adicionar(Veiculo veiculo) throws VeiculoExistenteException {
         try {
             this.buscarUm(veiculo.getCODIGO());
             throw new VeiculoExistenteException(veiculo.getCODIGO());
         } catch (ObjetoNaoEncontradoException exception){
             veiculos.add(veiculo);
+            return veiculo;
         }
     }
 

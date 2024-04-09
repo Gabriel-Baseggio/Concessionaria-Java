@@ -12,7 +12,7 @@ public interface IBanco<T, ID> {
 
     T buscarUm(ID id) throws ObjetoNaoEncontradoException;
 
-    void adicionar(T novo) throws ObjetoExistenteException;
+    T adicionar(T novo) throws ObjetoExistenteException;
 
     void remover(ID id) throws ObjetoNaoEncontradoException, PermissaoNegadaException;
 

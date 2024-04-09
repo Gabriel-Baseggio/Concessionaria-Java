@@ -32,12 +32,13 @@ public class BancoUsuarios implements IBanco<Cliente, Long> {
     }
 
     @Override
-    public void adicionar(Cliente cliente) throws UsuarioExistenteException {
+    public Cliente adicionar(Cliente cliente) throws UsuarioExistenteException {
         try {
             this.buscarUm(cliente.getCPF());
             throw new UsuarioExistenteException(cliente.getCPF());
         } catch (ObjetoNaoEncontradoException exception){
             clientes.add(cliente);
+            return cliente;
         }
     }
 
