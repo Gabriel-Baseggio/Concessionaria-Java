@@ -56,8 +56,8 @@ public class MenuController {
             }
             case 1 -> usuarioController.cadastrarUsuario();
             case 2 -> login();
-            case 3 -> veiculoController.verVeiculos();
-            case 4 -> veiculoController.verVeiculo();
+            case 3 -> veiculoController.buscarVeiculosDisponiveis();
+            case 4 -> veiculoController.buscarVeiculo();
             default -> {
                 try {
                     throw new OpcaoInvalidaException();
@@ -101,8 +101,8 @@ public class MenuController {
             try {
                 switch (escolha) {
                     case 0 -> usuarioLogado = null;
-                    case 1 -> veiculoController.verVeiculos();
-                    case 2 -> veiculoController.verVeiculo();
+                    case 1 -> veiculoController.buscarVeiculosDisponiveis();
+                    case 2 -> veiculoController.buscarVeiculo();
                     case 3 -> usuarioController.verMeusVeiculos();
                     case 4 -> usuarioController.vender();
                     case 5 -> usuarioController.verUsuario();
