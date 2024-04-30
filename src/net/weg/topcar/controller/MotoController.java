@@ -29,8 +29,8 @@ public class MotoController extends VeiculoController {
             throws PrecoInvalidoException, ObjetoNaoEncontradoException {
         isGerente();
         buscarVeiculo(codigo);
-        Moto motooEditada = new Moto(codigo, preco, placa, ano, modelo, marca, quilometragem, novo,
+        Moto motoEditada = new Moto(codigo, preco, placa, ano, modelo, marca, quilometragem, novo,
                 tipoMotor, cilindradas, qtdMarchas);
-        editarVeiculo(motooEditada);
+        editarVeiculo(motoEditada);
     }
 }

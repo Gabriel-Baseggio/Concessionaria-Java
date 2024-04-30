@@ -16,6 +16,7 @@ public class Gerente extends Vendedor implements IGerente {
 
     public Gerente(String nome, Long cpf, String senha, Double salario) {
         super(nome, cpf, senha, salario);
+        setPorcentagemComissao(0.02);
     }
 
     @Override
@@ -43,7 +44,7 @@ public class Gerente extends Vendedor implements IGerente {
     }
 
     @Override
-    public String removerVeiculo(Long codigo, IBanco<Veiculo, Long> banco) throws ObjetoNaoEncontradoException {
+    public String removerVeiculo(Long codigo, IBanco<Veiculo, Long> banco) throws ObjetoNaoEncontradoException, PermissaoNegadaException {
         banco.remover(codigo);
         return "Veículo removido!";
     }
@@ -135,11 +136,10 @@ public class Gerente extends Vendedor implements IGerente {
     }
 
     @Override
-    public List<String> verPagamentosDosVendedores(IBanco<Cliente, Long> banco) {
-        List<Vendedor> vendedores = verVendedores(banco);
+    public List<String> verPagamentoVendedores(List<Vendedor> listaVendedores) {
         List<String> pagamentos = new ArrayList<>();
 
-        vendedores.forEach(vendedor -> {
+        listaVendedores.forEach(vendedor -> {
             pagamentos.add(vendedor.verPagamentoComNome());
         });
 

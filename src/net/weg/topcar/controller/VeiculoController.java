@@ -2,6 +2,7 @@ package net.weg.topcar.controller;
 
 import net.weg.topcar.model.exceptions.*;
 import net.weg.topcar.model.usuarios.IGerente;
+import net.weg.topcar.model.usuarios.UsuarioAutenticadoBack;
 import net.weg.topcar.model.veiculos.Caminhao;
 import net.weg.topcar.model.veiculos.Carro;
 import net.weg.topcar.model.veiculos.Moto;
@@ -49,7 +50,7 @@ public class VeiculoController {
     }
 
     protected void isGerente() throws PermissaoNegadaException {
-        if (!(autenticacaoService.getUsuarioLogado() instanceof IGerente)) {
+        if (!(UsuarioAutenticadoBack.getUsuario() instanceof IGerente)) {
             throw new PermissaoNegadaException("O usuário não é um gerente.");
         }
     }

@@ -1,6 +1,6 @@
 package net.weg.topcar.model.exceptions;
 
-public class PermissaoNegadaException extends RuntimeException {
+public class PermissaoNegadaException extends Exception {
     public PermissaoNegadaException() {
         super("Você não tem permissão para executar isso!");
     }

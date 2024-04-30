@@ -51,12 +51,12 @@ public abstract class Veiculo {
         return quilometragem;
     }
 
-    public Boolean getNovo() {
+    public Boolean isNovo() {
         return novo;
     }
 
-    public Boolean getVendido() {
-        return vendido;
+    public Boolean isVendido() {
+        return this.vendido;
     }
 
     public void setPreco(Double preco) throws PrecoInvalidoException {
@@ -68,10 +68,6 @@ public abstract class Veiculo {
 
     public String getModelo() {
         return this.modelo;
-    }
-
-    public Boolean isVendido() {
-        return this.vendido;
     }
 
     public void alterarStatusVendido() {

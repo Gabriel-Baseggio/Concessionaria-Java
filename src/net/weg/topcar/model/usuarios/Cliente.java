@@ -57,7 +57,6 @@ public class Cliente implements ICliente {
     }
 
     public void adicionarProprioVeiculo(Veiculo veiculo) {
-        veiculo.alterarStatusVendido();
         VEICULOS.add(veiculo);
     }
 

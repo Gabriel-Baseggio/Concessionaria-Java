@@ -10,7 +10,7 @@ public interface IGerente extends IVendedor {
 
     String cadastrarVeiculo(Veiculo veiculo, IBanco<Veiculo, Long> banco) throws ObjetoExistenteException;
 
-    String removerVeiculo(Long codigo, IBanco<Veiculo, Long> banco) throws ObjetoNaoEncontradoException;
+    String removerVeiculo(Long codigo, IBanco<Veiculo, Long> banco) throws ObjetoNaoEncontradoException, PermissaoNegadaException;
 
     String editarVeiculo(Veiculo veiculo, IBanco<Veiculo, Long> banco) throws ObjetoNaoEncontradoException;
 
@@ -29,7 +29,7 @@ public interface IGerente extends IVendedor {
 
     List<Cliente> verClientes(IBanco<Cliente, Long> banco);
 
-    List<String> verPagamentosDosVendedores(IBanco<Cliente, Long> banco);
+    List<String> verPagamentoVendedores(List<Vendedor> vendedores);
 
     String verPagamentoVendedor(Long cpf, IBanco<Cliente, Long> banco) throws ObjetoNaoEncontradoException;
 

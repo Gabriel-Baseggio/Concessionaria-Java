@@ -1,10 +1,7 @@
 package net.weg.topcar.service;
 
 import net.weg.topcar.dao.IBanco;
-import net.weg.topcar.model.exceptions.ObjetoExistenteException;
-import net.weg.topcar.model.exceptions.ObjetoNaoEncontradoException;
-import net.weg.topcar.model.exceptions.PrecoInvalidoException;
-import net.weg.topcar.model.exceptions.VeiculoExistenteException;
+import net.weg.topcar.model.exceptions.*;
 import net.weg.topcar.model.veiculos.Veiculo;
 
 import java.util.ArrayList;
@@ -34,7 +31,7 @@ public class VeiculoService {
         return veiculoBanco.buscarUm(codigo);
     }
 
-    public void remover(Long codigo) throws ObjetoNaoEncontradoException {
+    public void remover(Long codigo) throws ObjetoNaoEncontradoException, PermissaoNegadaException {
         veiculoBanco.remover(codigo);
     }
 

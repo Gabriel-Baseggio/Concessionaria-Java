@@ -1,9 +1,12 @@
 package net.weg.topcar.service;
 
 import net.weg.topcar.dao.IBanco;
+import net.weg.topcar.model.exceptions.FalhaNaVendaException;
 import net.weg.topcar.model.exceptions.ObjetoExistenteException;
 import net.weg.topcar.model.exceptions.ObjetoNaoEncontradoException;
+import net.weg.topcar.model.exceptions.PermissaoNegadaException;
 import net.weg.topcar.model.usuarios.Cliente;
+import net.weg.topcar.model.usuarios.Gerente;
 import net.weg.topcar.model.usuarios.UsuarioAutenticadoBack;
 import net.weg.topcar.model.usuarios.Vendedor;
 import net.weg.topcar.model.veiculos.Veiculo;
@@ -14,6 +17,12 @@ import java.util.List;
 public class UsuarioService {
 
     private IBanco<Cliente, Long> usuarioBanco;
+    private VeiculoService veiculoService;
+
+    public UsuarioService(IBanco<Cliente, Long> usuarioBanco, VeiculoService veiculoService) {
+        this.usuarioBanco = usuarioBanco;
+        this.veiculoService = veiculoService;
+    }
 
     public Cliente adicionar(Cliente novoCliente) throws ObjetoExistenteException {
         return usuarioBanco.adicionar(novoCliente);
@@ -23,8 +32,8 @@ public class UsuarioService {
         return usuarioBanco.existe(cpf);
     }
 
-    public void alterar(Cliente clienteEditado) throws ObjetoNaoEncontradoException {
-        usuarioBanco.alterar(clienteEditado.getCPF(), clienteEditado);
+    public void alterar(Long cpf, Cliente clienteEditado) throws ObjetoNaoEncontradoException {
+        usuarioBanco.alterar(cpf, clienteEditado);
     }
 
     public Cliente buscarUm(Long cpf) throws ObjetoNaoEncontradoException {
@@ -35,14 +44,20 @@ public class UsuarioService {
         return UsuarioAutenticadoBack.getUsuario().verMeusVeiculos();
     }
 
-    private void atualizarEnvolvidosNaVenda(Cliente cliente, Vendedor vendedor, Veiculo veiculo) throws ObjetoNaoEncontradoException {
-        bancoUsuarios.alterar(cliente.getCPF(), cliente); // Carro cliente
-        bancoUsuarios.alterar(vendedor.getCPF(), vendedor); // Comissão
-        bancoVeiculos.alterar(veiculo.getCODIGO(), veiculo); // Vendido
+    public void vender(Long cpfCliente, Long codigo) throws ObjetoNaoEncontradoException, FalhaNaVendaException {
+        Cliente cliente = buscarUm(cpfCliente);
+        Vendedor vendedor = (Vendedor) UsuarioAutenticadoBack.getUsuario();
+        Veiculo veiculo = veiculoService.buscarUm(codigo);
+
+        vendedor.vender(veiculo, cliente);
+
+        usuarioBanco.alterar(cliente.getCPF(), cliente); // Carro cliente
+        usuarioBanco.alterar(vendedor.getCPF(), vendedor); // Comissão
+        veiculoService.alterar(veiculo.getCODIGO(), veiculo); // Vendido
     }
 
-    private List<Vendedor> buscarVendedores() {
-        List<Cliente> listaClientes = bancoUsuarios.buscarTodos();
+    public List<Vendedor> buscarVendedores() {
+        List<Cliente> listaClientes = usuarioBanco.buscarTodos();
         return filtrarVendedores(listaClientes);
     }
 
@@ -58,17 +73,22 @@ public class UsuarioService {
         return listaVendedores;
     }
 
-    private Veiculo buscarVeiculo() throws ObjetoNaoEncontradoException {
-        Long codigo = entradaCodigo();
-        return bancoVeiculos.buscarUm(codigo);
+    public void remover(Long cpf) throws ObjetoNaoEncontradoException, PermissaoNegadaException {
+        usuarioBanco.remover(cpf);
     }
 
-    private void cadastrarVendedor(String nome, Long cpf, String senha, Double salario) throws ObjetoExistenteException {
-        bancoUsuarios.adicionar(new Vendedor(nome, cpf, senha, salario));
+    public String buscarPagamento(Long cpf) throws ObjetoNaoEncontradoException {
+        Vendedor vendedor = (Vendedor) buscarUm(cpf);
+        return vendedor.verPagamento();
     }
 
-    private void cadastrarCliente(String nome, Long cpf, String senha) throws ObjetoExistenteException {
-        bancoUsuarios.adicionar(new Cliente(nome, cpf, senha));
+    public List<Cliente> buscarUsuarios() {
+        return usuarioBanco.buscarTodos();
     }
 
+    public List<String> buscarPagamentoVendedores() {
+        List<Vendedor> listaVendedores = buscarVendedores();
+        Gerente gerente = (Gerente) UsuarioAutenticadoBack.getUsuario();
+        return gerente.verPagamentoVendedores(listaVendedores);
+    }
 }

@@ -7,10 +7,12 @@ import net.weg.topcar.model.exceptions.ObjetoNaoEncontradoException;
 
 public class Vendedor extends Cliente implements IVendedor {
     private Double salario;
+    private Double porcentagemComissao;
     private Double totalComissao;
 
     public Vendedor(String nome, Long cpf, String senha, Double salario) {
         super(nome, cpf, senha);
+        this.porcentagemComissao = 0.01;
         this.salario = salario;
     }
 
@@ -28,6 +30,10 @@ public class Vendedor extends Cliente implements IVendedor {
         return salario;
     }
 
+    public void setPorcentagemComissao(Double porcentagemComissao) {
+        this.porcentagemComissao = porcentagemComissao;
+    }
+
     public double calcularPagamento() {
         return salario + totalComissao;
     }
@@ -36,7 +42,8 @@ public class Vendedor extends Cliente implements IVendedor {
     public void vender(Veiculo veiculo, Cliente cliente) throws FalhaNaVendaException {
         if(!veiculo.isVendido()){
             cliente.adicionarProprioVeiculo(veiculo);
-            this.setComissao(veiculo.getPreco() * 0.01);
+            veiculo.alterarStatusVendido();
+            this.setComissao(veiculo.getPreco() * this.porcentagemComissao);
         } else {
             throw new FalhaNaVendaException("O veículo já foi comprado!");
         }
